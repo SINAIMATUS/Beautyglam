@@ -1,0 +1,25 @@
+{
+  "name": "bg",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "dotenv": "^17.2.3",
+    "expo": "~54.0.20",
+    "expo-constants": "^18.0.10",
+    "expo-status-bar": "~3.0.8",
+    "firebase": "^12.4.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-get-random-values": "^2.0.0",
+    "react-native-url-polyfill": "^3.0.0"
+  },
+  "private": true
+}
