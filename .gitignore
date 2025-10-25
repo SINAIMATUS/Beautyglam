@@ -1,5 +1,11 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
+FIREBASE_API_KEY=AIzaSyDPqr3MVkPyIedvyUvPFBs4bGaztgk0t9Y
+FIREBASE_AUTH_DOMAIN=beautyglam-840f8.firebaseapp.com
+FIREBASE_PROJECT_ID=beautyglam-840f8
+FIREBASE_STORAGE_BUCKET=beautyglam-840f8.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=674765720557
+FIREBASE_APP_ID=1:674765720557:web:f487b2c6c0aaa7fc7575e4
+FIREBASE_MEASUREMENT_ID=G-2JGKM5KGS8
 # dependencies
 node_modules/
 
