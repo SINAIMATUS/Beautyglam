@@ -40,12 +40,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 80,
     },
-    titulo: {
-        fontSize: 22,
-        fontWeight: "bold",
-        marginBottom: 16,
-        color: "#701111ff",
-    },
     card: {
         backgroundColor: "#fce4ec", // rosa claro
         padding: 16,
@@ -60,7 +54,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "#701111ff",
+        color: "#651010ff",
         marginBottom: 4,
     },
     

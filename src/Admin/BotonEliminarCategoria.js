@@ -4,12 +4,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 
 
-const BotonEliminarCategoria = ({ firebaseId, eliminarCategoria }) => {
+const BotonEliminarCategoria = ({ id, eliminarCategoria }) => {
     const [visible, setVisible] = useState(false);
 
     const confirmarEliminar = () => {
         setVisible(false);
-        eliminarCategoria(firebaseId);
+        eliminarCategoria(id);
     };
 
     return (
@@ -45,12 +45,12 @@ const BotonEliminarCategoria = ({ firebaseId, eliminarCategoria }) => {
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.78)',
+        backgroundColor: 'rgba(121, 56, 96, 0.68)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalContainer: {
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#edd3e0ff',
         padding: 24,
         borderRadius: 12,
         width: '80%',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
-        color: '#ffffffff',
+        color: '#b91b75d8',
         textAlign: 'center',
     },
     descripcion: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     botonIcono: {
-        backgroundColor: '#fce4ec',
+        backgroundColor: '#f9d4e0ff',
         padding: 8,
         borderRadius: 6,
         alignItems: 'center',
@@ -95,9 +95,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     botonEliminar: {
-        backgroundColor: '#fce4ec',
+        backgroundColor: '#d4386cff',
         padding: 10,
         borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "cd3b6cff",
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     textoEliminar: {
-        color: '#ffffffff',
+        color: '#000000ff',
         fontWeight: 'bold',
     },
 });

@@ -10,15 +10,6 @@ const FormularioProductos = ({
     modoEdicion,
 }) => {
 
-    const validarYGuardar = () => {
-        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria } = nuevoProducto;
-
-        if (CodigoDeProducto && Nombre && Precio && Descripcion && Categoria) {
-            guardarProducto();
-        } else {
-            alert("Por favor, complete todos los campos.");
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -81,6 +72,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 12, // menos espacio vertical
+        marginTop: 80,
         backgroundColor: "#fff",
     },
     titulo: {
