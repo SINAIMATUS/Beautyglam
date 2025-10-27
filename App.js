@@ -1,12 +1,9 @@
-import React from "react";
-import Productos from "./src/Views/Productos";
-import Categorias from "./src/Views/Categorias";
+import * as React from 'react';
+import Navegacion from './src/Screens/Navegacion';
 
-export default function App() {
-
-  return (
-    <>
-    <Productos/>
-    </>
-  );
+export default function App(){
+  return(
+    <Navegacion>
+    </Navegacion>
+  )
 }

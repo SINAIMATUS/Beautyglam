@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import { View, TextInput, StyleSheet, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 
 const FormularioProductos = ({
@@ -8,14 +8,10 @@ const FormularioProductos = ({
     guardarProducto,
     actualizarProducto,
     modoEdicion,
+    seleccionarImagen,
 }) => {
-
-
     return (
         <View style={styles.container}>
-            <Text style={styles.titulo}>
-                {modoEdicion ? "Actualizar Producto" : "Registro de Producto"}
-            </Text>
 
             <TextInput
                 style={styles.input}
@@ -55,23 +51,43 @@ const FormularioProductos = ({
                 keyboardType="numeric"
             />
 
-            <TouchableOpacity
-                style={styles.botonGuardar}
-                onPress={modoEdicion ? actualizarProducto : guardarProducto}
-            >
-                <Text style={styles.textoBoton}>
-                    {modoEdicion ? "ACTUALIZAR" : "GUARDAR"}
-                </Text>
-            </TouchableOpacity>
+            <View style={[styles.previewContainer, !nuevoProducto.Foto && styles.bordeAdvertencia]}>
+                {nuevoProducto.Foto ? (
+                    <Image
+                        source={{ uri: nuevoProducto.Foto }}
+                        style={styles.preview}
+                        resizeMode="contain"
+                    />
+                ) : (
+                    <Text style={styles.mensajePreview}>La imagen se mostrará aquí</Text>
+                )}
+            </View>
+            <View style={styles.botonesFila}>
+                <TouchableOpacity
+                    style={styles.botonImagen}
+                    onPress={seleccionarImagen}
+                >
+                    <Text style={styles.textoBoton}>📷</Text>
+                </TouchableOpacity>
 
+                <TouchableOpacity
+                    style={styles.botonGuardar}
+                    onPress={modoEdicion ? actualizarProducto : guardarProducto}
+                >
+                    <Text style={styles.textoBoton}>
+                        {modoEdicion ? "ACTUALIZAR" : "GUARDAR"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
+
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
-        paddingVertical: 12, // menos espacio vertical
+        paddingVertical: 12,
         marginTop: 80,
         backgroundColor: "#fff",
     },
@@ -89,28 +105,70 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginBottom: 10,
         borderRadius: 8,
-        height: 38, // más compacto
-        width: "100%", // ocupa todo el ancho disponible
+        height: 38,
+        width: "100%",
+    },
+    botonesFila: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    botonImagen: {
+        backgroundColor: "#b83964ff",
+        paddingVertical: 6,
+        paddingHorizontal: 15,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "40%",
     },
     botonGuardar: {
         backgroundColor: "#701111ff",
-        paddingVertical: 9,
-        paddingHorizontal: 24,
-        borderRadius: 8,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 30,
         alignItems: "center",
-        marginTop: 13,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        width: "60%", // botón alargado
+        justifyContent: "center",
+        width: "40%",
     },
     textoBoton: {
-        color: "#fff",
-        fontSize: 16,
+        color: "#ffffffff",
+        fontSize: 12,
         fontWeight: "bold",
         letterSpacing: 1,
     },
+    previewContainer: {
+        marginBottom: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        padding: 4,
+    },
+    bordeAdvertencia: {
+        borderColor: "#bd0808ff",
+    },
+    preview: {
+        width: "100%",
+        height: 120,
+        marginBottom: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ccc",
+    },
+    mensajePreview: {
+        fontSize: 10,
+        color: "#999",
+        marginBottom: 10,
+        textAlign: "center",
+    },
+    advertenciaImagen: {
+        color: "#a00a46",
+        fontSize: 5,
+        fontWeight: "bold",
+        marginBottom: 10,
+        textAlign: "center",
+    },
 });
-
 
 export default FormularioProductos;

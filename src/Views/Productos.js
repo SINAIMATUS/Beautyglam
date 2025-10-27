@@ -1,18 +1,54 @@
 import React, { useEffect, useState } from "react";
+import * as ImagePicker from 'expo-image-picker';
 import { View, StyleSheet } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioProductos from "../Admin/FormularioProductos";
 import TablaProductos from "../Admin/TablaProductos";
+import { useNavigation } from "@react-navigation/native";
 
 const Productos = () => {
+    const navigation = useNavigation();
     const [nuevoProducto, setNuevoProducto] = useState({
         CodigoDeProducto: "",
         Nombre: "",
         Precio: "",
         Descripcion: "",
         Categoria: "",
+        Foto: "",
     });
+    //FUNCIONALIDAD PARA AGREGAR IMAGEN
+
+    const seleccionarImagen = async () => {
+        // Solicitar permiso
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permiso denegado. Activa el acceso a fotos en la configuración del teléfono.');
+            return;
+        }
+
+        // Abrir galería
+        const resultado = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            base64: true,
+            quality: 0.5,
+        });
+
+        // Verificar resultado
+        if (!resultado.canceled && resultado.assets && resultado.assets.length > 0) {
+            const base64 = `data:image/jpeg;base64,${resultado.assets[0].base64}`;
+            console.log("Imagen seleccionada:", base64); // ✅ Verifica en consola
+            setNuevoProducto((prev) => ({
+                ...prev,
+                Foto: base64,
+            }));
+        } else {
+            console.log("No se seleccionó ninguna imagen.");
+        }
+    };
+
+
 
     const [Productos, setProductos] = useState([]);
     const [modoEdicion, setModoEdicion] = useState(false);
@@ -26,7 +62,7 @@ const Productos = () => {
     };
 
     const guardarProducto = async () => {
-        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria } = nuevoProducto;
+        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria, Foto } = nuevoProducto;
 
         const precioConvertido = parseFloat(Precio);
 
@@ -45,6 +81,7 @@ const Productos = () => {
                     Precio: precioConvertido,
                     Descripcion,
                     Categoria,
+                    Foto,
                 });
                 cargarDatos();
                 setNuevoProducto({
@@ -53,6 +90,7 @@ const Productos = () => {
                     Precio: "",
                     Descripcion: "",
                     Categoria: "",
+                    Foto: "",
                 });
             } catch (error) {
                 console.error("Error al registrar producto:", error);
@@ -85,6 +123,7 @@ const Productos = () => {
                     Precio: parseFloat(nuevoProducto.Precio),
                     Descripcion: nuevoProducto.Descripcion,
                     Categoria: nuevoProducto.Categoria,
+                    Foto: nuevoProducto.Foto,
                 });
                 setNuevoProducto({ CodigoDeProducto: "", Nombre: "", Precio: "", Descripcion: "", Categoria: "" });
 
@@ -101,12 +140,14 @@ const Productos = () => {
     };
 
     const editarProducto = (Productos) => {
+        navigation.navigate('editarProducto', { Productos: item });
         setNuevoProducto({
             CodigoDeProducto: Productos.CodigoDeProducto,
             Nombre: Productos.Nombre,
             Precio: Productos.Precio.toString(),
             Descripcion: Productos.Descripcion,
             Categoria: Productos.Categoria,
+            Foto: Productos.Foto,
         });
         setProductoId(Productos.id);
         setModoEdicion(true);
@@ -142,6 +183,17 @@ const Productos = () => {
                 editarProducto={editarProducto}
                 eliminarProducto={eliminarProducto}
             />
+            <View style={{
+                backgroundColor: '#1b2',
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
+
+            >
+                <Text>Productos</Text>
+                <Button tittle='ZZZZZ' onPress={() => navigation.navigate("ProductStack")}></Button>
+            </View>
 
         </View>
     );

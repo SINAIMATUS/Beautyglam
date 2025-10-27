@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView , StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioCategoria from '../Admin/FormularioCategorias';
 import TablaCategorias from '../Admin/TablaCategorias';
-
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const Categorias = () => {
   const [nuevaCategoria, setNuevaCategoria] = useState({

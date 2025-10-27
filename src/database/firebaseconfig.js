@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore} from "firebase/firestore"
+import { getFirestore } from "firebase/firestore"
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import Constants from "expo-constants";
 import "react-native-get-random-values";
