@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {View, StyleSheet, Text,TextInput,TouchableOpacity,} from "react-native";
+import {View, StyleSheet, Text,TextInput,TouchableOpacity, Image} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,13 +32,18 @@ export default function CatalogoPublico() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.titulo}>Catálogo</Text>
+        <Image
+          source={require("../Imagenes/2.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <View style={styles.subHeader}>
+          <Text style={styles.titulo}>BeautyGlam</Text>
           <TouchableOpacity
             style={styles.botonLogin}
             onPress={() => navigation.navigate("Login")}
           >
-            <Ionicons name="person-outline" size={20} color="#78032aff" />
+            <Ionicons name="person-circle-outline" size={18} color="#78032aff" />
             <Text style={styles.textoLogin}>Iniciar Sesión</Text>
           </TouchableOpacity>
         </View>
@@ -66,35 +71,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  logo: {
+    width: 120,
+    height: 50,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 10,
   },
-  header: {
+  subHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    width: '100%',
   },
   titulo: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
-    flex: 1,
-    textAlign: "center",
   },
   botonLogin: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f0f0f0",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     borderRadius: 20,
     gap: 5,
   },
   textoLogin: {
     color: "#78032aff",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   input: {

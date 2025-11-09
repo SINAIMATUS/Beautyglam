@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text,Image, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
+import {View, Text,Image, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../database/firebaseconfig';
+import AvisoLoginModal from './AvisoLoginModal';
 
 export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   const { toggleFavorito, agregarAlCarrito, esFavorito } = useApp();
@@ -14,6 +15,8 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMensaje, setModalMensaje] = useState("");
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -43,19 +46,14 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   });
 
   const pedirLogin = (accion) => {
-    Alert.alert(
-      'Iniciar Sesión Requerido',
-      `Para ${accion} necesitas iniciar sesión. ¿Deseas iniciar sesión ahora?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Aceptar',
-          onPress: () => {
-            navigation.navigate('Login');
-          },
-        },
-      ]
-    );
+    let mensaje = "";
+    if (accion.includes("favoritos")) {
+      mensaje = "Para agregar el producto a tus favoritos debes tener una cuenta BG.";
+    } else {
+      mensaje = "Para agregar el producto a tu carrito debes tener una cuenta BG.";
+    }
+    setModalMensaje(mensaje);
+    setModalVisible(true);
   };
 
   const estaAutenticado = async () => {
@@ -94,43 +92,54 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   }
 
   return (
-    <FlatList
-      data={filtrados}
-      keyExtractor={(item) => item.id}
-      numColumns={2}
-      contentContainerStyle={styles.container}
-      renderItem={({ item }) => {
-        const favorito = esFavorito(item.id);
-        return (
-          <View style={[styles.card, { backgroundColor: '#f9f9f9' }]}>
-            <Image source={{ uri: item.Foto }} style={styles.image} />
-            <View style={styles.info}>
-              <Text style={styles.price}>${item.Precio}</Text>
-              <Text style={styles.name}>{item.Nombre}</Text>
-              <Text style={styles.time}>{item.Categoria}</Text>
+    <>
+      <FlatList
+        data={filtrados}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.container}
+        renderItem={({ item }) => {
+          const favorito = esFavorito(item.id);
+          return (
+            <View style={[styles.card, { backgroundColor: '#f9f9f9' }]}>
+              <Image source={{ uri: item.Foto }} style={styles.image} />
+              <View style={styles.info}>
+                <Text style={styles.price}>${item.Precio}</Text>
+                <Text style={styles.name}>{item.Nombre}</Text>
+                <Text style={styles.time}>{item.Categoria}</Text>
+              </View>
+              <View style={styles.botonesAccion}>
+                <TouchableOpacity
+                  style={styles.heart}
+                  onPress={() => handleFavorito(item)}
+                >
+                  <Entypo
+                    name={favorito ? 'heart' : 'heart-outlined'}
+                    size={24}
+                    color={favorito ? '#e91e63' : 'black'}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.carrito}
+                  onPress={() => handleCarrito(item)}
+                >
+                  <Ionicons name="cart-outline" size={24} color="#78032aff" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.botonesAccion}>
-              <TouchableOpacity
-                style={styles.heart}
-                onPress={() => handleFavorito(item)}
-              >
-                <Entypo
-                  name={favorito ? 'heart' : 'heart-outlined'}
-                  size={24}
-                  color={favorito ? '#e91e63' : 'black'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.carrito}
-                onPress={() => handleCarrito(item)}
-              >
-                <Ionicons name="cart-outline" size={24} color="#78032aff" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
-      }}
-    />
+          );
+        }}
+      />
+      <AvisoLoginModal
+        visible={modalVisible}
+        mensaje={modalMensaje}
+        onCerrar={() => setModalVisible(false)}
+        onAceptar={() => {
+          setModalVisible(false);
+          navigation.navigate('Login');
+        }}
+      />
+    </>
   );
 }
 

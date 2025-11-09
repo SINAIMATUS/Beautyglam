@@ -1,25 +1,15 @@
-import React, { useState, useCallback } from "react";
-import {View,TextInput,  Button, StyleSheet, Text, Alert, BackHandler, Image,} from "react-native";
+import React, { useState } from "react";
+import {View,TextInput, StyleSheet, Text, Alert, Image, TouchableOpacity} from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
   const auth = getAuth();
-
-  useFocusEffect(
-    useCallback(() => {
-      const bloquearAtras = () => true;
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        bloquearAtras
-      );
-      return () => backHandler.remove();
-    }, [])
-  );
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -53,6 +43,12 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back-circle-outline" size={32} color="#555" />
+      </TouchableOpacity>
       <Image
         source={require("../Imagenes/2.png")}
         style={styles.logo}
@@ -79,7 +75,9 @@ export default function LoginScreen() {
         placeholderTextColor="#999"
       />
 
-      <Button title="Ingresar" onPress={handleLogin} />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Ingresar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -90,6 +88,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
     backgroundColor: "#fff",
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#555',
+    marginLeft: 5,
+    fontWeight: '600',
   },
   logo: {
     width: 200,
@@ -112,5 +124,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 12,
     color: "#333",
+  },
+  loginButton: {
+    backgroundColor: '#701111ff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

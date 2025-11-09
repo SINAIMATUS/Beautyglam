@@ -42,6 +42,7 @@ const Productos = () => {
 
     const [modoEdicion, setModoEdicion] = useState(false);
     const [productoId, setProductoId] = useState(null);
+    const [notification, setNotification] = useState(null);
 
     const manejoCambio = (campo, valor) => {
         setNuevoProducto((prev) => ({
@@ -71,7 +72,8 @@ const Productos = () => {
                     Categoria,
                     Foto,
                 });
-                alert("Producto guardado con éxito");
+                setNotification("Producto guardado con éxito");
+                setTimeout(() => setNotification(null), 3000);
                 setNuevoProducto({
                     CodigoDeProducto: "",
                     Nombre: "",
@@ -115,7 +117,8 @@ const Productos = () => {
                 });
                 setModoEdicion(false);
                 setProductoId(null);
-                alert("Producto actualizado con éxito");
+                setNotification("Producto actualizado con éxito");
+                setTimeout(() => setNotification(null), 3000);
             } else {
                 alert("Por favor, complete todos los campos.");
             }
@@ -139,6 +142,7 @@ const Productos = () => {
 
     return (
         <ScrollView style={styles.container}>
+            {notification && <Text style={styles.notification}>{notification}</Text>}
             <View style={styles.content}>
                 <FormularioProductos
                     nuevoProducto={nuevoProducto}
@@ -180,6 +184,16 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 14,
+    },
+    notification: {
+        backgroundColor: '#28a745',
+        color: 'white',
+        padding: 12,
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
+        borderRadius: 5,
+        margin: 10,
     },
 });
 

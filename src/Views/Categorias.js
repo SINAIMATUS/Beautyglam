@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioCategoria from "../Admin/FormularioCategorias";
@@ -102,7 +102,7 @@ const Categorias = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <FormularioCategoria
         nuevaCategoria={nuevaCategoria}
         manejoCambio={manejoCambio}
@@ -115,20 +115,15 @@ const Categorias = () => {
         editarCategoria={editarCategoria}
         eliminarCategoria={eliminarCategoria}
       />
-      <View style={styles.footer}>
-        <Text style={{ color: '#fff' }}>Categorías</Text>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 18 },
-  footer: {
-    backgroundColor: '#1b2',
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 18,
   },
 });
 

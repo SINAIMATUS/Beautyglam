@@ -51,8 +51,8 @@ const FormularioCategorias = ({
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        marginTop: 20,
+        paddingHorizontal: 20,
+        paddingTop: 10,
     },
     logo: {
         width: 80,

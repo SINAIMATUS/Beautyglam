@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Cate from './CateClient';
 import ProductsClient from './ProductsClient';
@@ -11,6 +11,11 @@ export default function Catalogo() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <Image
+          source={require("../Imagenes/2.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.titulo}>Catálogo</Text>
 
         <TextInput
@@ -36,6 +41,12 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  logo: {
+    width: 80,
+    height: 50,
+    alignSelf: 'center',
+    marginBottom: 5,
   },
   container: {
     flex: 1,
