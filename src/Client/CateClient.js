@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../database/firebaseconfig';
 
-const categorias = ['Todos', 'Maquillaje', 'Skincare', 'Dermocosmeticos'];
 
 export default function Cate({ onSelectCategoria }) {
   const [seleccionada, setSeleccionada] = useState('Todos');
+  const [categorias, setCategorias] = useState(['Todos']);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Categorias'));
+        const categoriasList = querySnapshot.docs.map(
+          (doc) => doc.data().Categoria
+        );
+        setCategorias(['Todos', ...categoriasList]);
+      } catch (error) {
+        console.error('Error fetching categories: ', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategorias();
+  }, []);
 
   const handlePress = (categoria) => {
     setSeleccionada(categoria);
@@ -19,6 +40,7 @@ export default function Cate({ onSelectCategoria }) {
 
   return (
     <View style={styles.wrapper}>
+      {loading && <ActivityIndicator color="#78032aff" />}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import { View, TextInput, StyleSheet, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 
 const FormularioCategorias = ({
@@ -12,6 +12,11 @@ const FormularioCategorias = ({
 
     return (
         <View style={styles.container}>
+            <Image
+              source={require("../Imagenes/2.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
             <Text style={styles.titulo}>
                 {modoEdicion ? "Actualizar Categoria" : "Registro de Categoria"}
             </Text>
@@ -47,13 +52,19 @@ const FormularioCategorias = ({
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        marginTop: 80, // esto empuja el formulario hacia abajo
+        marginTop: 20,
     },
-
+    logo: {
+        width: 80,
+        height: 80,
+        alignSelf: 'flex-start',
+        marginBottom: 15,
+    },
     titulo: {
         fontSize: 18,
         fontWeight: "bold",
-        marginBottom: 14
+        marginBottom: 14,
+        alignSelf: 'flex-start',
     },
     input: {
         borderWidth: 3,

@@ -35,7 +35,6 @@ const ProductosLista = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Lista de Productos</Text>
       <TablaProductos
         Productos={productos}
         editarProducto={() => { }}
@@ -46,7 +45,7 @@ const ProductosLista = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#121212", padding: 18 },
+  container: { flex: 1, backgroundColor: "#f0f0f0", padding: 18 },
   titulo: {
     fontSize: 24,
     fontWeight: "bold",

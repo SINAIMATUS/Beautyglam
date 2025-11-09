@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { View,TextInput,StyleSheet,Text,Image,TouchableOpacity,} from "react-native";
 import SelectorCategoriaModal from "./SelectorCategoriaModal";
 
 const FormularioProductos = ({
@@ -19,6 +12,11 @@ const FormularioProductos = ({
 }) => {
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../Imagenes/2.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <TextInput
         style={styles.input}
         placeholder="Código del Producto"
@@ -96,7 +94,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingVertical: 12,
-    marginTop: 80,
+    marginTop: 20,
     backgroundColor: "#fff",
     borderRadius: 12,
     shadowColor: "#000",
@@ -104,6 +102,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 4,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 15,
   },
   input: {
     borderWidth: 2,

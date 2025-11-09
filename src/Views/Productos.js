@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioProductos from "../Admin/FormularioProductos";
-import TablaProductos from "../Admin/TablaProductos";
 import { useNavigation } from "@react-navigation/native";
 
 const Productos = () => {
@@ -41,7 +40,6 @@ const Productos = () => {
         }
     };
 
-    const [Productos, setProductos] = useState([]);
     const [modoEdicion, setModoEdicion] = useState(false);
     const [productoId, setProductoId] = useState(null);
 
@@ -73,7 +71,7 @@ const Productos = () => {
                     Categoria,
                     Foto,
                 });
-                cargarDatos();
+                alert("Producto guardado con éxito");
                 setNuevoProducto({
                     CodigoDeProducto: "",
                     Nombre: "",
@@ -87,19 +85,6 @@ const Productos = () => {
             }
         } else {
             alert("Por favor, complete todos los campos correctamente.");
-        }
-    };
-
-    const cargarDatos = async () => {
-        try {
-            const querySnapshot = await getDocs(collection(db, "Productos"));
-            const data = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setProductos(data);
-        } catch (error) {
-            console.error("Error al obtener documentos:", error);
         }
     };
 
@@ -130,7 +115,7 @@ const Productos = () => {
                 });
                 setModoEdicion(false);
                 setProductoId(null);
-                cargarDatos();
+                alert("Producto actualizado con éxito");
             } else {
                 alert("Por favor, complete todos los campos.");
             }
@@ -152,49 +137,49 @@ const Productos = () => {
         setModoEdicion(true);
     };
 
-    const eliminarProducto = async (id) => {
-        try {
-            await deleteDoc(doc(db, "Productos", id));
-            cargarDatos();
-        } catch (error) {
-            console.error("Error al eliminar:", error);
-        }
-    };
-
-    useEffect(() => {
-        cargarDatos();
-    }, []);
-
     return (
-        <View style={styles.container}>
-            <FormularioProductos
-                nuevoProducto={nuevoProducto}
-                manejoCambio={manejoCambio}
-                guardarProducto={guardarProducto}
-                actualizarProducto={actualizarProducto}
-                modoEdicion={modoEdicion}
-                seleccionarImagen={seleccionarImagen}
-            />
-            <TablaProductos
-                Productos={Productos}
-                editarProducto={editarProducto}
-                eliminarProducto={eliminarProducto}
-            />
-            <View style={styles.footer}>
-                <Text style={{ color: '#fff' }}>Productos</Text>
-                <Button title="Ir a ProductStack" onPress={() => navigation.navigate("ProductStack")} />
+        <ScrollView style={styles.container}>
+            <View style={styles.content}>
+                <FormularioProductos
+                    nuevoProducto={nuevoProducto}
+                    manejoCambio={manejoCambio}
+                    guardarProducto={guardarProducto}
+                    actualizarProducto={actualizarProducto}
+                    modoEdicion={modoEdicion}
+                    seleccionarImagen={seleccionarImagen}
+                />
+                <TouchableOpacity
+                    style={styles.botonNavegacion}
+                    onPress={() => navigation.navigate("ProductStack")}
+                >
+                    <Text style={styles.textoBotonNavegacion}>Ver Lista de Productos</Text>
+                </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 18 },
-    footer: {
-        backgroundColor: '#1b2',
+    container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#f0f0f0',
+    },
+    content: {
+        padding: 18,
+    },
+    botonNavegacion: {
+        backgroundColor: '#701111ff',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 25,
+        alignSelf: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    textoBotonNavegacion: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 14,
     },
 });
 

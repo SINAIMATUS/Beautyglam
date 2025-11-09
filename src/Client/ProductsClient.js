@@ -1,84 +1,44 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {View, Text,Image, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const Productos = [
-  {
-    id: '1',
-    nombre: 'Sombra de ojos rosa',
-    precio: '$50',
-    tiempo: '8 hours ago',
-    categoria: 'Maquillaje',
-    imagen: require('../Imagenes/Maquillaje2.jpg'),
-    fondo: '#d0e9f2ff',
-  },
-  {
-    id: '2',
-    nombre: 'Sombra de ojos blanca',
-    precio: '$250',
-    tiempo: '20 hours ago',
-    categoria: 'Maquillaje',
-    imagen: require('../Imagenes/Maquillaje3.jpg'),
-    fondo: '#f0e0ff',
-  },
-  {
-    id: '3',
-    nombre: 'Tratamiento facial 1',
-    precio: '$20',
-    tiempo: '18 hours ago',
-    categoria: 'Dermocosmeticos',
-    imagen: require('../Imagenes/Facial1.jpg'),
-    fondo: '#f0e0ff',
-  },
-  {
-    id: '4',
-    nombre: 'Tratamiento facial 2',
-    precio: '$30',
-    tiempo: '16 hours ago',
-    categoria: 'Dermocosmeticos',
-    imagen: require('../Imagenes/Facial2.jpg'),
-    fondo: '#ffe0e0',
-  },
-  {
-    id: '5',
-    nombre: 'Tratamiento facial 3',
-    precio: '$40',
-    tiempo: '14 hours ago',
-    categoria: 'Dermocosmeticos',
-    imagen: require('../Imagenes/Facial3.jpg'),
-    fondo: '#e0ffe0',
-  },
-  {
-    id: '6',
-    nombre: 'Crema hidratante',
-    precio: '$100',
-    tiempo: '22 hours ago',
-    categoria: 'Dermocosmeticos',
-    imagen: require('../Imagenes/Skincare2.jpg'),
-    fondo: '#f0e0ff',
-  },
-];
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../database/firebaseconfig';
 
 export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   const { toggleFavorito, agregarAlCarrito, esFavorito } = useApp();
   const navigation = useNavigation();
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filtrados = Productos.filter((p) => {
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Productos'));
+        const productosList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setProductos(productosList);
+        setError(null);
+      } catch (e) {
+        setError('No se pudieron cargar los productos.');
+        console.error('Error fetching productos: ', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  const filtrados = productos.filter((p) => {
     const coincideCategoria =
-      categoriaSeleccionada === 'Todos' || p.categoria === categoriaSeleccionada;
-    const coincideNombre = p.nombre.toLowerCase().includes(filtroNombre.toLowerCase());
+      categoriaSeleccionada === 'Todos' || p.Categoria === categoriaSeleccionada;
+    const coincideNombre = p.Nombre.toLowerCase().includes(filtroNombre.toLowerCase());
     return coincideCategoria && coincideNombre;
   });
 
@@ -121,6 +81,18 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
     }
   };
 
+  if (loading) {
+    return <ActivityIndicator size="large" color="#78032aff" style={{ marginTop: 20 }} />;
+  }
+
+  if (error) {
+    return <Text style={styles.errorText}>{error}</Text>;
+  }
+
+  if (filtrados.length === 0) {
+    return <Text style={styles.emptyText}>No se encontraron productos.</Text>;
+  }
+
   return (
     <FlatList
       data={filtrados}
@@ -130,12 +102,12 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
       renderItem={({ item }) => {
         const favorito = esFavorito(item.id);
         return (
-          <View style={[styles.card, { backgroundColor: item.fondo }]}>
-            <Image source={item.imagen} style={styles.image} />
+          <View style={[styles.card, { backgroundColor: '#f9f9f9' }]}>
+            <Image source={{ uri: item.Foto }} style={styles.image} />
             <View style={styles.info}>
-              <Text style={styles.price}>{item.precio}</Text>
-              <Text style={styles.name}>{item.nombre}</Text>
-              <Text style={styles.time}>{item.tiempo}</Text>
+              <Text style={styles.price}>${item.Precio}</Text>
+              <Text style={styles.name}>{item.Nombre}</Text>
+              <Text style={styles.time}>{item.Categoria}</Text>
             </View>
             <View style={styles.botonesAccion}>
               <TouchableOpacity
@@ -217,5 +189,17 @@ const styles = StyleSheet.create({
   },
   carrito: {
     padding: 6,
+  },
+  errorText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: 'red',
+    fontSize: 16,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#999',
+    fontSize: 16,
   },
 });

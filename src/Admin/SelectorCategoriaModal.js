@@ -20,8 +20,11 @@ export default function SelectorCategoriaModal({
   useEffect(() => {
     const cargarCategorias = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "categorias"));
-        const lista = snapshot.docs.map((doc) => doc.data().nombre);
+        const snapshot = await getDocs(collection(db, "Categorias"));
+        const lista = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return data.Categoria; // Usar el campo 'Categoria'
+        });
         setCategorias(lista);
       } catch (error) {
         console.error("Error al cargar categorías:", error);
