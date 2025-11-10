@@ -52,6 +52,14 @@ const FormularioProductos = ({
         onSeleccionar={(valor) => manejoCambio("Categoria", valor)}
       />
 
+      <TextInput
+        style={styles.input}
+        placeholder="Stock"
+        value={nuevoProducto.Stock}
+        onChangeText={(valor) => manejoCambio("Stock", valor)}
+        keyboardType="numeric"
+      />
+
       <View
         style={[
           styles.previewContainer,

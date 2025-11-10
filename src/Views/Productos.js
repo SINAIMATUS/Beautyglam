@@ -15,6 +15,7 @@ const Productos = () => {
         Descripcion: "",
         Categoria: "",
         Foto: "",
+        Stock: "",
     });
 
     const seleccionarImagen = async () => {
@@ -52,7 +53,7 @@ const Productos = () => {
     };
 
     const guardarProducto = async () => {
-        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria, Foto } = nuevoProducto;
+        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria, Foto, Stock } = nuevoProducto;
         const precioConvertido = parseFloat(Precio);
 
         if (
@@ -61,6 +62,7 @@ const Productos = () => {
             Precio &&
             Descripcion &&
             Categoria &&
+            Stock &&
             !isNaN(precioConvertido)
         ) {
             try {
@@ -70,7 +72,9 @@ const Productos = () => {
                     Precio: precioConvertido,
                     Descripcion,
                     Categoria,
+                    Stock,
                     Foto,
+                   
                 });
                 setNotification("Producto guardado con éxito");
                 setTimeout(() => setNotification(null), 3000);
@@ -80,7 +84,9 @@ const Productos = () => {
                     Precio: "",
                     Descripcion: "",
                     Categoria: "",
+                    Stock: "",
                     Foto: "",
+                   
                 });
             } catch (error) {
                 console.error("Error al registrar producto:", error);
@@ -97,7 +103,8 @@ const Productos = () => {
                 nuevoProducto.Nombre &&
                 nuevoProducto.Precio &&
                 nuevoProducto.Descripcion &&
-                nuevoProducto.Categoria
+                nuevoProducto.Categoria &&
+                nuevoProducto.Stock
             ) {
                 await updateDoc(doc(db, "Productos", productoId), {
                     CodigoDeProducto: nuevoProducto.CodigoDeProducto,
@@ -105,7 +112,9 @@ const Productos = () => {
                     Precio: parseFloat(nuevoProducto.Precio),
                     Descripcion: nuevoProducto.Descripcion,
                     Categoria: nuevoProducto.Categoria,
+                    Stock: nuevoProducto.Stock,
                     Foto: nuevoProducto.Foto,
+                    
                 });
                 setNuevoProducto({
                     CodigoDeProducto: "",
@@ -113,6 +122,7 @@ const Productos = () => {
                     Precio: "",
                     Descripcion: "",
                     Categoria: "",
+                    Stock: "",
                     Foto: "",
                 });
                 setModoEdicion(false);
@@ -134,6 +144,7 @@ const Productos = () => {
             Precio: producto.Precio.toString(),
             Descripcion: producto.Descripcion,
             Categoria: producto.Categoria,
+            Stock: producto.Stock,
             Foto: producto.Foto,
         });
         setProductoId(producto.id);

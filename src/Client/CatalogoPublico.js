@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {View, StyleSheet, Text,TextInput,TouchableOpacity, Image} from "react-native";
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,20 +32,21 @@ export default function CatalogoPublico() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Image
-          source={require("../Imagenes/2.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <View style={styles.subHeader}>
-          <Text style={styles.titulo}>BeautyGlam</Text>
-          <TouchableOpacity
-            style={styles.botonLogin}
-            onPress={() => navigation.navigate("Login")}
-          >
-            <Ionicons name="person-circle-outline" size={18} color="#78032aff" />
-            <Text style={styles.textoLogin}>Iniciar Sesión</Text>
-          </TouchableOpacity>
+        <View style={styles.headerContainer}>
+          <Image
+            source={require("../Imagenes/2.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <View style={styles.subHeader}>
+            <Text style={styles.titulo}>BeautyGlam</Text>
+            <TouchableOpacity
+              style={styles.botonLogin}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Text style={styles.textoLogin}>Iniciar Sesión</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <TextInput
@@ -72,9 +73,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   logo: {
-    width: 120,
-    height: 50,
-    alignSelf: 'flex-start',
+    width: 80,
+    height: 40,
+  },
+  headerContainer: {
+    width: '100%',
     marginBottom: 10,
   },
   container: {
@@ -86,6 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: '100%',
+    marginTop: 5,
   },
   titulo: {
     fontSize: 24,
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f0f0f0",
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: 20,
     gap: 5,
   },

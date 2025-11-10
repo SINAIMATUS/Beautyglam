@@ -16,21 +16,20 @@ export default function Favoritos() {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <Text style={styles.titulo}>Mis Favoritos</Text>
       <FlatList
         data={favoritos}
         keyExtractor={(item) => item.id}
         numColumns={2}
-        contentContainerStyle={styles.lista}
+        contentContainerStyle={styles.container}
         renderItem={({ item }) => {
           const favorito = esFavorito(item.id);
           return (
-            <View style={[styles.card, { backgroundColor: item.fondo || '#f0f0f0' }]}>
-              <Image source={item.imagen} style={styles.image} />
-              <Text style={styles.price}>{item.precio}</Text>
-              <Text style={styles.name}>{item.nombre}</Text>
-              <Text style={styles.time}>{item.tiempo}</Text>
+            <View style={styles.card}>
+              <Image source={{ uri: item.Foto }} style={styles.image} />
+              <Text style={styles.price}>${item.Precio}</Text>
+              <Text style={styles.name}>{item.Nombre}</Text>
               <TouchableOpacity
                 style={styles.heart}
                 onPress={() => toggleFavorito(item)}
@@ -45,26 +44,25 @@ export default function Favoritos() {
           );
         }}
       />
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 40,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     backgroundColor: '#fff',
+    paddingBottom: 20,
   },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
+    paddingTop: 40,
     color: '#333',
     textAlign: 'center',
-  },
-  lista: {
-    paddingBottom: 20,
+    backgroundColor: '#fff',
   },
   card: {
     flex: 1,
@@ -73,11 +71,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     position: 'relative',
-    minHeight: 220,
+    backgroundColor: '#f9f9f9',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   image: {
-    width: 90,
-    height: 90,
+    width: 120,
+    height: 120,
     marginBottom: 10,
     resizeMode: 'contain',
   },
@@ -85,21 +85,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 4,
   },
   name: {
     fontSize: 14,
-    fontWeight: '600',
     color: '#333',
-    marginBottom: 2,
-  },
-  time: {
-    fontSize: 10,
-    color: 'gray',
+    textAlign: 'center',
+    marginTop: 4,
   },
   heart: {
     position: 'absolute',
-    bottom: 10,
+    top: 10,
     right: 10,
   },
   emptyContainer: {
@@ -114,4 +109,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-

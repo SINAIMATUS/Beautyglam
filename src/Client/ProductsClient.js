@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text,Image, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../database/firebaseconfig';
 import AvisoLoginModal from './AvisoLoginModal';
+import ProductoCard from './ProductoCard';
 
 export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   const { toggleFavorito, agregarAlCarrito, esFavorito } = useApp();
@@ -73,7 +72,16 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
   const handleCarrito = async (item) => {
     const autenticado = await estaAutenticado();
     if (autenticado) {
-      agregarAlCarrito(item);
+      // Aseguramos que el objeto tenga la estructura correcta
+      const productoParaCarrito = {
+        id: item.id,
+        Nombre: item.Nombre,
+        Precio: item.Precio,
+        Foto: item.Foto,
+        Descripcion: item.Descripcion,
+        // ... otras propiedades que necesites en el carrito
+      };
+      agregarAlCarrito(productoParaCarrito);
     } else {
       pedirLogin('agregar al carrito');
     }
@@ -95,40 +103,13 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
     <>
       <FlatList
         data={filtrados}
+        renderItem={({ item }) => (
+          <ProductoCard item={item} esFavorito={esFavorito} onToggleFavorito={handleFavorito} onAgregarAlCarrito={handleCarrito} />
+        )}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.container}
-        renderItem={({ item }) => {
-          const favorito = esFavorito(item.id);
-          return (
-            <View style={[styles.card, { backgroundColor: '#f9f9f9' }]}>
-              <Image source={{ uri: item.Foto }} style={styles.image} />
-              <View style={styles.info}>
-                <Text style={styles.price}>${item.Precio}</Text>
-                <Text style={styles.name}>{item.Nombre}</Text>
-                <Text style={styles.time}>{item.Categoria}</Text>
-              </View>
-              <View style={styles.botonesAccion}>
-                <TouchableOpacity
-                  style={styles.heart}
-                  onPress={() => handleFavorito(item)}
-                >
-                  <Entypo
-                    name={favorito ? 'heart' : 'heart-outlined'}
-                    size={24}
-                    color={favorito ? '#e91e63' : 'black'}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.carrito}
-                  onPress={() => handleCarrito(item)}
-                >
-                  <Ionicons name="cart-outline" size={24} color="#78032aff" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
+        showsVerticalScrollIndicator={false}
       />
       <AvisoLoginModal
         visible={modalVisible}
@@ -145,59 +126,8 @@ export default function Producs({ categoriaSeleccionada, filtroNombre }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     paddingBottom: 20,
-  },
-  card: {
-    flex: 1,
-    margin: 8,
-    borderRadius: 15,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: 260,
-    position: 'relative',
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    resizeMode: 'contain',
-  },
-  info: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  price: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  name: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
-    textAlign: 'center',
-  },
-  time: {
-    fontSize: 10,
-    color: 'gray',
-    textAlign: 'center',
-  },
-  botonesAccion: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
-    marginTop: 10,
-  },
-  heart: {
-    padding: 6,
-  },
-  carrito: {
-    padding: 6,
   },
   errorText: {
     textAlign: 'center',

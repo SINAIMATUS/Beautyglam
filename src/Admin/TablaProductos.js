@@ -8,8 +8,9 @@ const TablaProductos = ({ Productos, editarProducto, eliminarProducto }) => {
       <Image source={{ uri: item.Foto }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.nombre}>{item.Nombre}</Text>
-        <Text style={styles.precio}>💲{item.Precio}</Text>
-        <Text style={styles.categoria}>📁 {item.Categoria}</Text>
+        <Text style={styles.precio}>${item.Precio}</Text>
+        <Text style={styles.categoria}>🛍️{item.Categoria}</Text>
+        <Text style={styles.stock}>📦Stock:{item.Stock}</Text>
         <Text style={styles.descripcion}>{item.Descripcion}</Text>
       </View>
       <View style={styles.botones}>
@@ -61,7 +62,8 @@ const styles = StyleSheet.create({
   },
   precio: {
     fontSize: 14,
-    color: "#27ae60",
+    fontWeight: "bold",
+    color: "#a00a46ca",
   },
   categoria: {
     fontSize: 12,

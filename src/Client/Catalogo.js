@@ -16,7 +16,9 @@ export default function Catalogo() {
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.titulo}>Catálogo</Text>
+        <View style={styles.subHeader}>
+          <Text style={styles.titulo}>BeautyGlam</Text>
+        </View>
 
         <TextInput
           style={styles.input}
@@ -43,21 +45,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   logo: {
-    width: 80,
+    width: 120,
     height: 50,
-    alignSelf: 'center',
-    marginBottom: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
   },
   container: {
     flex: 1,
     paddingHorizontal: 10,
   },
+  subHeader: {
+    width: '100%',
+  },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 10,
     color: '#333',
-    textAlign: 'center',
   },
   input: {
     height: 40,

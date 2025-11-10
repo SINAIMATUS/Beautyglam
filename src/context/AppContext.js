@@ -68,8 +68,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const totalCarrito = carrito.reduce((sum, item) => {
-    const precio = parseFloat(item.precio.replace('$', '')) || 0;
-    return sum + precio * item.cantidad;
+    // Usamos item.Precio (mayúscula) y un método más seguro para convertir a número.
+    const precioString = String(item.Precio ?? '0');
+    const precio = parseFloat(precioString) || 0;
+    return sum + (precio * item.cantidad);
   }, 0);
 
   const estaAutenticado = () => {
@@ -104,4 +106,3 @@ export const useApp = () => {
   }
   return context;
 };
-

@@ -23,14 +23,16 @@ export default function Carrito() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.lista}
         renderItem={({ item }) => {
-          const precio = parseFloat(item.precio.replace('$', '')) || 0;
+          // Aseguramos que el precio sea un string antes de usar .replace()
+          const precioString = String(item.Precio ?? '0');
+          const precio = parseFloat(precioString) || 0;
           const subtotal = precio * item.cantidad;
           return (
             <View style={styles.card}>
-              <Image source={item.imagen} style={styles.image} />
+              <Image source={{ uri: item.Foto }} style={styles.image} />
               <View style={styles.info}>
-                <Text style={styles.name}>{item.nombre}</Text>
-                <Text style={styles.price}>{item.precio}</Text>
+                <Text style={styles.name}>{item.Nombre}</Text>
+                <Text style={styles.price}>${item.Precio}</Text>
                 <View style={styles.cantidadContainer}>
                   <TouchableOpacity
                     style={styles.botonCantidad}
@@ -183,4 +185,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
