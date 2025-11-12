@@ -1,6 +1,8 @@
 import React from "react";
 import { View,TextInput,StyleSheet,Text,Image,TouchableOpacity,} from "react-native";
 import SelectorCategoriaModal from "./SelectorCategoriaModal";
+import Marcas from "../Views/Marcas";
+import SelectorMarcaModal from "./SelectorMarcaModal";
 
 const FormularioProductos = ({
   nuevoProducto,
@@ -51,6 +53,13 @@ const FormularioProductos = ({
         categoriaSeleccionada={nuevoProducto.Categoria}
         onSeleccionar={(valor) => manejoCambio("Categoria", valor)}
       />
+
+     <SelectorMarcaModal
+        marcaSeleccionada={nuevoProducto.Marca}
+        onSeleccionar={(valor) => manejoCambio("Marca", valor)}
+      />
+
+
 
       <TextInput
         style={styles.input}

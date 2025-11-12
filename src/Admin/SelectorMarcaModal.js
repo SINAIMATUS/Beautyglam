@@ -3,31 +3,31 @@ import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet, } from "reac
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../database/firebaseconfig";
 
-export default function SelectorCategoriaModal({
-  categoriaSeleccionada,
+export default function SelectorMarcaModal({
+  marcaSeleccionada,
   onSeleccionar,
 }) {
-  const [categorias, setCategorias] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const cargarCategorias = async () => {
+    const cargarMarcas = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "Categorias"));
+        const snapshot = await getDocs(collection(db, "Marcas"));
         const lista = snapshot.docs.map((doc) => {
           const data = doc.data();
-          return data.Categoria; // Usar el campo 'Categoria'
+          return data.Marca; // Usar el campo 'Marca'
         });
-        setCategorias(lista);
+        setMarcas(lista);
       } catch (error) {
-        console.error("Error al cargar categorías:", error);
+        console.error("Error al cargar las Marcas:", error);
       }
     };
-    cargarCategorias();
+    cargarMarcas();
   }, []);
 
-  const seleccionar = (categoria) => {
-    onSeleccionar(categoria);
+  const seleccionar = (marca) => {
+    onSeleccionar(marca);
     setVisible(false);
   };
 
@@ -35,16 +35,16 @@ export default function SelectorCategoriaModal({
     <View style={styles.wrapper}>
       <TouchableOpacity style={styles.boton} onPress={() => setVisible(true)}>
         <Text style={styles.textoBoton}>
-          {categoriaSeleccionada || "Seleccionar categoría"}
+          {marcaSeleccionada || "Seleccionar marca"}
         </Text>
       </TouchableOpacity>
 
       <Modal visible={visible} transparent animationType="slide">
         <View style={styles.overlay}>
           <View style={styles.modal}>
-            <Text style={styles.titulo}>Selecciona una categoría</Text>
+            <Text style={styles.titulo}>Selecciona una marca</Text>
             <FlatList
-              data={categorias}
+              data={marcas}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity

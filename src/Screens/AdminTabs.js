@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Productos from '../Views/Productos';
 import Categorias from '../Views/Categorias';
 import CerrarSesion from '../Views/CerrarSesion';
+import Marcas from '../Views/Marcas';
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +43,7 @@ export default function AdminTabs() {
             let iconName;
             if (route.name === 'Productos') iconName = 'shirt-outline';
             else if (route.name === 'Categorías') iconName = 'pricetags-outline';
+            else if (route.name === 'Marcas') iconName = 'pricetags-outline';
             else if (route.name === 'Cerrar Sesión') iconName = 'log-out-outline';
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -50,6 +52,7 @@ export default function AdminTabs() {
       >
         <Tab.Screen name="Productos" component={Productos} />
         <Tab.Screen name="Categorías" component={Categorias} />
+        <Tab.Screen name="Marcas" component={Marcas} />
         <Tab.Screen name="Cerrar Sesión" component={CerrarSesion} />
       </Tab.Navigator>
     </SafeAreaView>

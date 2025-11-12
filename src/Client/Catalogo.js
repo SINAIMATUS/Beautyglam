@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, Image } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Image, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Cate from './CateClient';
 import ProductsClient from './ProductsClient';
@@ -7,6 +7,28 @@ import ProductsClient from './ProductsClient';
 export default function Catalogo() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
+
+  // Este componente renderizará todo lo que va antes de la lista de productos.
+  const renderHeader = () => (
+    <>
+      <Image
+        source={require("../Imagenes/2.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <View style={styles.subHeader}>
+        <Text style={styles.titulo}>BeautyGlam</Text>
+      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Buscar producto..."
+        value={busqueda}
+        onChangeText={setBusqueda}
+        placeholderTextColor="#999"
+      />
+      <Cate onSelectCategoria={setCategoriaSeleccionada} />
+    </>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -33,6 +55,7 @@ export default function Catalogo() {
         <ProductsClient
           categoriaSeleccionada={categoriaSeleccionada}
           filtroNombre={busqueda}
+          ListHeaderComponent={renderHeader}
         />
       </View>
     </SafeAreaView>

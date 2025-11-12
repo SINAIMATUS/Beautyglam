@@ -7,6 +7,9 @@ import LoginScreen from '../Login/Login';
 import AdminTabs from '../Screens/AdminTabs';
 import ClienteTabs from '../Screens/ClienteTabs';
 import ProductStack from './ProductStack';
+import Marcas from '../Views/Marcas';
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +18,7 @@ export default function Navegacion() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="CatalogoPublico" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="CatalogoPublico" component={CatalogoPublico} />
+        <Stack.Screen name="Marcas" component={Marcas} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="AdminTabs" component={AdminTabs} />
         <Stack.Screen name="ClienteTabs" component={ClienteTabs} />

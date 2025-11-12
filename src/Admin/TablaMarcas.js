@@ -1,26 +1,26 @@
 import React from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import BotonEliminarCategoria from "./BotonEliminarCategoria";
+import BotonEliminarMarca from "./BotonEliminarMarca";
 
-const TablaCategorias = ({ Categorias, editarCategoria, eliminarCategoria, ListHeaderComponent }) => {
+const TablaMarcas = ({ Marcas, editarMarca, eliminarMarca, ListHeaderComponent }) => {
   const renderItem = ({ item }) => (
     <View style={styles.fila}>
       <View style={styles.info}>
-        <Text style={styles.texto}>📁 {item.Categoria}</Text>
+        <Text style={styles.texto}>🏷️ {item.Marca}</Text>
         <Text style={styles.subtexto}>ID: {item.IDentificador}</Text>
       </View>
       <View style={styles.botones}>
-        <TouchableOpacity style={styles.botonEditar} onPress={() => editarCategoria(item)}>
+        <TouchableOpacity style={styles.botonEditar} onPress={() => editarMarca(item)}>
           <Text style={styles.textoBoton}>✏️</Text>
         </TouchableOpacity>
-        <BotonEliminarCategoria id={item.id} eliminarCategoria={eliminarCategoria} />
+        <BotonEliminarMarca id={item.id} eliminarMarca={eliminarMarca} />
       </View>
     </View>
   );
 
   return (
     <FlatList
-      data={Categorias}
+      data={Marcas}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       contentContainerStyle={styles.lista}
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TablaCategorias;
+export default TablaMarcas;

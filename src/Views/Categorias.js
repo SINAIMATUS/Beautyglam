@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioCategoria from "../Admin/FormularioCategorias";
@@ -102,20 +102,22 @@ const Categorias = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <FormularioCategoria
-        nuevaCategoria={nuevaCategoria}
-        manejoCambio={manejoCambio}
-        guardarCategoria={guardarCategoria}
-        actualizarCategoria={actualizarCategoria}
-        modoEdicion={modoEdicion}
-      />
+    <View style={styles.container}>
       <TablaCategorias
         Categorias={Categorias}
         editarCategoria={editarCategoria}
         eliminarCategoria={eliminarCategoria}
+        ListHeaderComponent={() => (
+          <FormularioCategoria
+            nuevaCategoria={nuevaCategoria}
+            manejoCambio={manejoCambio}
+            guardarCategoria={guardarCategoria}
+            actualizarCategoria={actualizarCategoria}
+            modoEdicion={modoEdicion}
+          />
+        )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
