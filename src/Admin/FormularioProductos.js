@@ -1,7 +1,6 @@
 import React from "react";
 import { View,TextInput,StyleSheet,Text,Image,TouchableOpacity,} from "react-native";
 import SelectorCategoriaModal from "./SelectorCategoriaModal";
-import Marcas from "../Views/Marcas";
 import SelectorMarcaModal from "./SelectorMarcaModal";
 
 const FormularioProductos = ({

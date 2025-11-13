@@ -10,7 +10,8 @@ const TablaProductos = ({ Productos, editarProducto, eliminarProducto }) => {
         <Text style={styles.nombre}>{item.Nombre}</Text>
         <Text style={styles.precio}>${item.Precio}</Text>
         <Text style={styles.categoria}>🛍️{item.Categoria}</Text>
-        <Text style={styles.stock}>📦Stock:{item.Stock}</Text>
+        <Text style={styles.marca}>🏷️ {item.Marca}</Text>
+        <Text style={styles.stock}>📦 Stock: {item.Stock}</Text>
         <Text style={styles.descripcion}>{item.Descripcion}</Text>
       </View>
       <View style={styles.botones}>
@@ -68,6 +69,15 @@ const styles = StyleSheet.create({
   categoria: {
     fontSize: 12,
     color: "#666",
+  },
+  marca: {
+    fontSize: 12,
+    color: "#666",
+  },
+  stock: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 2,
   },
   descripcion: {
     fontSize: 12,

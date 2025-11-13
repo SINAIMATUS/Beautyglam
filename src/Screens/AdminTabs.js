@@ -1,26 +1,16 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Productos from '../Views/Productos';
 import Categorias from '../Views/Categorias';
 import CerrarSesion from '../Views/CerrarSesion';
 import Marcas from '../Views/Marcas';
+import ProductStack from './ProductStack'; // Importamos el Stack de Productos
 
 const Tab = createBottomTabNavigator();
 
 export default function AdminTabs() {
-  useFocusEffect(
-    useCallback(() => {
-      const bloquearBack = () => true;
-      const backHandler = BackHandler.addEventListener('hardwareBackPress', bloquearBack);
-      return () => backHandler.remove();
-    }, [])
-  );
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <Tab.Navigator
@@ -50,7 +40,7 @@ export default function AdminTabs() {
           },
         })}
       >
-        <Tab.Screen name="Productos" component={Productos} />
+        <Tab.Screen name="Productos" component={ProductStack} />
         <Tab.Screen name="Categorías" component={Categorias} />
         <Tab.Screen name="Marcas" component={Marcas} />
         <Tab.Screen name="Cerrar Sesión" component={CerrarSesion} />

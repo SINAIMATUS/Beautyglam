@@ -1,22 +1,49 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Platform } from "react-native";
 import { db } from "../database/firebaseconfig";
-import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
 import FormularioProductos from "../Admin/FormularioProductos";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons';
 
 const Productos = () => {
     const navigation = useNavigation();
+    const route = useRoute();
     const [nuevoProducto, setNuevoProducto] = useState({
         CodigoDeProducto: "",
         Nombre: "",
         Precio: "",
         Descripcion: "",
         Categoria: "",
+        Marca: "",
         Foto: "",
         Stock: "",
     });
+
+    // Este efecto se ejecuta cada vez que la pantalla se enfoca
+    useFocusEffect(
+        React.useCallback(() => {
+            // Si se pasaron parámetros de un producto, entra en modo edición
+            if (route.params?.producto) {
+                editarProducto(route.params.producto);
+            } else {
+                // Si no hay parámetros, asegúrate de que el formulario esté limpio
+                setModoEdicion(false);
+                setProductoId(null);
+                setNuevoProducto({
+                    CodigoDeProducto: "",
+                    Nombre: "",
+                    Precio: "",
+                    Descripcion: "",
+                    Categoria: "",
+                    Marca: "",
+                    Stock: "",
+                    Foto: "",
+                });
+            }
+        }, [route.params?.producto])
+    );
 
     const seleccionarImagen = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -53,7 +80,7 @@ const Productos = () => {
     };
 
     const guardarProducto = async () => {
-        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria, Foto, Stock } = nuevoProducto;
+        const { CodigoDeProducto, Nombre, Precio, Descripcion, Categoria, Marca, Foto, Stock } = nuevoProducto;
         const precioConvertido = parseFloat(Precio);
 
         if (
@@ -62,6 +89,7 @@ const Productos = () => {
             Precio &&
             Descripcion &&
             Categoria &&
+            Marca &&
             Stock &&
             !isNaN(precioConvertido)
         ) {
@@ -72,6 +100,7 @@ const Productos = () => {
                     Precio: precioConvertido,
                     Descripcion,
                     Categoria,
+                    Marca,
                     Stock,
                     Foto,
                    
@@ -84,6 +113,7 @@ const Productos = () => {
                     Precio: "",
                     Descripcion: "",
                     Categoria: "",
+                    Marca: "",
                     Stock: "",
                     Foto: "",
                    
@@ -104,6 +134,7 @@ const Productos = () => {
                 nuevoProducto.Precio &&
                 nuevoProducto.Descripcion &&
                 nuevoProducto.Categoria &&
+                nuevoProducto.Marca &&
                 nuevoProducto.Stock
             ) {
                 await updateDoc(doc(db, "Productos", productoId), {
@@ -113,6 +144,7 @@ const Productos = () => {
                     Descripcion: nuevoProducto.Descripcion,
                     Categoria: nuevoProducto.Categoria,
                     Stock: nuevoProducto.Stock,
+                    Marca: nuevoProducto.Marca,
                     Foto: nuevoProducto.Foto,
                     
                 });
@@ -122,6 +154,7 @@ const Productos = () => {
                     Precio: "",
                     Descripcion: "",
                     Categoria: "",
+                    Marca: "",
                     Stock: "",
                     Foto: "",
                 });
@@ -129,6 +162,8 @@ const Productos = () => {
                 setProductoId(null);
                 setNotification("Producto actualizado con éxito");
                 setTimeout(() => setNotification(null), 3000);
+                // Navega de vuelta a la lista después de actualizar
+                navigation.navigate("ProductosLista");
             } else {
                 alert("Por favor, complete todos los campos.");
             }
@@ -144,6 +179,7 @@ const Productos = () => {
             Precio: producto.Precio.toString(),
             Descripcion: producto.Descripcion,
             Categoria: producto.Categoria,
+            Marca: producto.Marca,
             Stock: producto.Stock,
             Foto: producto.Foto,
         });
@@ -153,6 +189,16 @@ const Productos = () => {
 
     return (
         <ScrollView style={styles.container}>
+            <View style={styles.cabeceraDelgada}>
+                {modoEdicion && (
+                    <TouchableOpacity 
+                        onPress={() => navigation.goBack()} 
+                        style={styles.backButton}
+                    >
+                        <Ionicons name="arrow-back" size={24} color="white" />
+                    </TouchableOpacity>
+                )}
+            </View>
             {notification && <Text style={styles.notification}>{notification}</Text>}
             <View style={styles.content}>
                 <FormularioProductos
@@ -165,7 +211,7 @@ const Productos = () => {
                 />
                 <TouchableOpacity
                     style={styles.botonNavegacion}
-                    onPress={() => navigation.navigate("ProductStack")}
+                    onPress={() => navigation.navigate("ProductosLista")}
                 >
                     <Text style={styles.textoBotonNavegacion}>Ver Lista de Productos</Text>
                 </TouchableOpacity>
@@ -178,6 +224,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f0f0f0',
+    },
+    cabeceraDelgada: {
+        height: 33, // Puedes ajustar esta altura como prefieras
+        backgroundColor: '#78032aff',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        left: 15,
+        top: 10, // Ajusta para centrar verticalmente
     },
     content: {
         padding: 18,

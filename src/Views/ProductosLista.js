@@ -3,10 +3,12 @@ import { View, StyleSheet, Text } from "react-native";
 import { db } from "../database/firebaseconfig";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import TablaProductos from "../Admin/TablaProductos";
+import { useNavigation } from "@react-navigation/native";
 
 const ProductosLista = () => {
   const [productos, setProductos] = useState([]);
-
+  const navigation = useNavigation();
+  
   const cargarDatos = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "Productos"));
@@ -29,6 +31,11 @@ const ProductosLista = () => {
     }
   };
 
+  const handleEditarProducto = (producto) => {
+    // Navega al formulario y pasa el producto para editar
+    navigation.navigate("ProductoFormulario", { producto: producto });
+  };
+
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -37,7 +44,7 @@ const ProductosLista = () => {
     <View style={styles.container}>
       <TablaProductos
         Productos={productos}
-        editarProducto={() => { }}
+        editarProducto={handleEditarProducto}
         eliminarProducto={eliminarProducto}
       />
     </View>
