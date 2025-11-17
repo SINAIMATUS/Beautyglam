@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../database/firebaseconfig';
+import { auth, db } from '../database/firebaseconfig';
+import { runTransaction, collection, doc, addDoc, serverTimestamp, getDocs, query, where, orderBy, limit, setDoc } from 'firebase/firestore';
 
 const AppContext = createContext();
 
@@ -63,6 +64,79 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const realizarCompra = async () => {
+    if (!usuarioAutenticado) {
+      throw new Error("Usuario no autenticado.");
+    }
+    if (carrito.length === 0) {
+      throw new Error("El carrito está vacío.");
+    }
+
+    let compraId; // Variable para almacenar el ID de la compra
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const productosParaActualizar = []; // Guardaremos aquí la info para la escritura
+
+        // 1. Verificar stock de todos los productos en el carrito
+        for (const item of carrito) {
+          const productoRef = doc(db, "Productos", item.id);
+          const productoDoc = await transaction.get(productoRef);
+
+          if (!productoDoc.exists()) {
+            throw new Error(`El producto ${item.Nombre} ya no existe.`);
+          }
+
+          const stockActual = productoDoc.data().Stock;
+          if (stockActual < item.cantidad) { // Si no hay stock, lanzamos error inmediato
+            throw new Error(`Stock insuficiente para: ${item.Nombre}. Disponible: ${stockActual}, Solicitado: ${item.cantidad}`);
+          } else {
+            // Si hay stock, preparamos los datos para la fase de escritura
+            productosParaActualizar.push({
+              ref: productoRef,
+              nuevoStock: stockActual - item.cantidad,
+            });
+          }
+        }
+
+        // 2. Si hay stock, crear la compra y actualizar el stock
+        const compraDocRef = doc(collection(db, "Compras")); // Primero creamos una referencia
+        compraId = compraDocRef.id; // Guardamos el ID
+
+        transaction.set(compraDocRef, { // Usamos la referencia en la transacción
+          clienteId: usuarioAutenticado.uid,
+          clienteEmail: usuarioAutenticado.email,
+          fecha: serverTimestamp(),
+          total: totalCarrito,
+        });
+
+        // Ahora ejecutamos las actualizaciones de stock usando los datos que ya leímos
+        for (const prod of productosParaActualizar) {
+          transaction.update(prod.ref, { Stock: prod.nuevoStock });
+        }
+      });
+
+      // 3. Añadir productos a la subcolección usando el ID que ya obtuvimos
+      for (const item of carrito) {
+        const productoCompraRef = doc(collection(db, "Compras", compraId, "Productos"));
+        await setDoc(productoCompraRef, { // Usamos setDoc para mayor control si fuera necesario
+          productoId: item.id,
+          nombre: item.Nombre,
+          precio: item.Precio,
+          cantidad: item.cantidad,
+          foto: item.Foto,
+        });
+      }
+
+      setCarrito([]); // Limpiar carrito local
+
+    } catch (error) {
+      console.error("Error al realizar la compra: ", error);
+      // Re-lanzamos el error para que la UI pueda manejarlo
+      throw error;
+    }
+  };
+
   const esFavorito = (productoId) => {
     return favoritos.some((p) => p.id === productoId);
   };
@@ -88,6 +162,7 @@ export const AppProvider = ({ children }) => {
         eliminarDelCarrito,
         actualizarCantidad,
         esFavorito,
+        realizarCompra,
         totalCarrito,
         usuarioAutenticado,
         esCliente,

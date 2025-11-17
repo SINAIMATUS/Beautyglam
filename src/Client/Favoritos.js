@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useApp } from '../context/AppContext';
 import Entypo from '@expo/vector-icons/Entypo';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Favoritos() {
-  const { favoritos, toggleFavorito, esFavorito } = useApp();
+  const { favoritos, toggleFavorito, esFavorito, agregarAlCarrito } = useApp();
 
   if (favoritos.length === 0) {
     return (
@@ -16,13 +17,13 @@ export default function Favoritos() {
   }
 
   return (
-    <>
+    <SafeAreaView style={styles.safeArea}>
       <Text style={styles.titulo}>Mis Favoritos</Text>
       <FlatList
         data={favoritos}
         keyExtractor={(item) => item.id}
         numColumns={2}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.lista}
         renderItem={({ item }) => {
           const favorito = esFavorito(item.id);
           return (
@@ -30,39 +31,48 @@ export default function Favoritos() {
               <Image source={{ uri: item.Foto }} style={styles.image} />
               <Text style={styles.price}>${item.Precio}</Text>
               <Text style={styles.name}>{item.Nombre}</Text>
-              <TouchableOpacity
-                style={styles.heart}
-                onPress={() => toggleFavorito(item)}
-              >
-                <Entypo
-                  name={favorito ? "heart" : "heart-outlined"}
-                  size={24}
-                  color={favorito ? "#e91e63" : "black"}
-                />
-              </TouchableOpacity>
+              <View style={styles.botonesAccion}>
+                <TouchableOpacity
+                  style={styles.heart}
+                  onPress={() => toggleFavorito(item)}
+                >
+                  <Entypo
+                    name={favorito ? "heart" : "heart-outlined"}
+                    size={24}
+                    color={favorito ? "#e91e63" : "black"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.carrito}
+                  onPress={() => agregarAlCarrito(item)}
+                >
+                  <Ionicons name="cart-outline" size={24} color="#78032aff" />
+                </TouchableOpacity>
+              </View>
             </View>
           );
         }}
       />
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 40,
-    paddingHorizontal: 5,
+  safeArea: {
+    flex: 1,
     backgroundColor: '#fff',
+  },
+  lista: {
+    paddingHorizontal: 5,
     paddingBottom: 20,
   },
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    paddingTop: 40,
+    marginTop: 10,
     color: '#333',
     textAlign: 'center',
-    backgroundColor: '#fff',
   },
   card: {
     flex: 1,
@@ -92,11 +102,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
-  heart: {
+  botonesAccion: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 15,
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    gap: 5,
   },
+  heart: { padding: 4 },
+  carrito: { padding: 4 },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',

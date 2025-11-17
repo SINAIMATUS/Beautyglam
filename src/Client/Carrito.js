@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Carrito() {
-  const { carrito, eliminarDelCarrito, actualizarCantidad, totalCarrito } = useApp();
+  const { carrito, eliminarDelCarrito, actualizarCantidad, totalCarrito, realizarCompra } = useApp();
+  const [cargando, setCargando] = useState(false);
 
   if (carrito.length === 0) {
     return (
@@ -14,6 +15,24 @@ export default function Carrito() {
       </View>
     );
   }
+
+  const handleComprar = async () => {
+    setCargando(true);
+    try {
+      await realizarCompra();
+      Alert.alert(
+        "¡Compra Exitosa!",
+        "Tu pedido ha sido procesado correctamente."
+      );
+    } catch (error) {
+      Alert.alert(
+        "Error en la Compra",
+        error.message || "No se pudo completar la compra. Inténtalo de nuevo."
+      );
+    } finally {
+      setCargando(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -62,8 +81,12 @@ export default function Carrito() {
       />
       <View style={styles.totalContainer}>
         <Text style={styles.totalTexto}>Total: ${totalCarrito.toFixed(2)}</Text>
-        <TouchableOpacity style={styles.botonComprar}>
-          <Text style={styles.botonComprarTexto}>Comprar</Text>
+        <TouchableOpacity style={styles.botonComprar} onPress={handleComprar} disabled={cargando}>
+          {cargando ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.botonComprarTexto}>Comprar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
