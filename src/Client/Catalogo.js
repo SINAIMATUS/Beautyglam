@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, Image, FlatList } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import Cate from './CateClient';
 import ProductsClient from './ProductsClient';
 
 export default function Catalogo() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
+  const navigation = useNavigation();
 
   // Este componente renderizará todo lo que va antes de la lista de productos.
   const renderHeader = () => (
@@ -18,6 +21,10 @@ export default function Catalogo() {
       />
       <View style={styles.subHeader}>
         <Text style={styles.titulo}>BeautyGlam</Text>
+        <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Perfil')}>
+          <Ionicons name="person-circle-outline" size={32} color="#78032aff" />
+          <Text style={styles.profileButtonText}>Yo</Text>
+        </TouchableOpacity>
       </View>
       <TextInput
         style={styles.input}
@@ -40,6 +47,10 @@ export default function Catalogo() {
         />
         <View style={styles.subHeader}>
           <Text style={styles.titulo}>BeautyGlam</Text>
+          <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Perfil')}>
+            <Ionicons name="person-circle-outline" size={32} color="#78032aff" />
+            <Text style={styles.profileButtonText}>Yo</Text>
+          </TouchableOpacity>
         </View>
 
         <TextInput
@@ -79,6 +90,7 @@ const styles = StyleSheet.create({
   },
   subHeader: {
     width: '100%',
+    flexDirection: 'row',
   },
   titulo: {
     fontSize: 24,
@@ -93,5 +105,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 10,
     color: '#333',
+  },
+  profileButton: {
+    position: 'absolute',
+    right: 0,
+    top: -20,
+    alignItems: 'center',
+  },
+  profileButtonText: {
+    fontSize: 12,
+    color: '#78032aff',
+    fontWeight: '600',
   },
 });
