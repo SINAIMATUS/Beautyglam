@@ -7,6 +7,7 @@ import Categorias from '../Views/Categorias';
 import CerrarSesion from '../Views/CerrarSesion';
 import Marcas from '../Views/Marcas';
 import ProductStack from './ProductStack'; // Importamos el Stack de Productos
+import PedidosAdmin from '../Admin/PedidosAdmin'; // Corregimos la importación al componente correcto
 
 const Tab = createBottomTabNavigator();
 
@@ -33,6 +34,7 @@ export default function AdminTabs() {
             let iconName;
             if (route.name === 'Productos') iconName = 'shirt-outline';
             else if (route.name === 'Categorías') iconName = 'pricetags-outline';
+            else if (route.name === 'Pedidos') iconName = 'receipt-outline';
             else if (route.name === 'Marcas') iconName = 'pricetags-outline';
             else if (route.name === 'Cerrar Sesión') iconName = 'log-out-outline';
 
@@ -41,6 +43,7 @@ export default function AdminTabs() {
         })}
       >
         <Tab.Screen name="Productos" component={ProductStack} />
+        <Tab.Screen name="Pedidos" component={PedidosAdmin} />
         <Tab.Screen name="Categorías" component={Categorias} />
         <Tab.Screen name="Marcas" component={Marcas} />
         <Tab.Screen name="Cerrar Sesión" component={CerrarSesion} />
