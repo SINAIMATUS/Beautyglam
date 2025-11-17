@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../database/firebaseconfig';
-import { LineChart, BarChart } from 'react-native-chart-kit';
+import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -34,73 +34,109 @@ const ChartContainer = ({ title, children }) => (
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
-  const [salesByDate, setSalesByDate] = useState(null);
-  const [cumulativeRevenue, setCumulativeRevenue] = useState(null);
+  const [revenueByDate, setRevenueByDate] = useState(null);
   const [topProducts, setTopProducts] = useState(null);
+  const [orderStatusDistribution, setOrderStatusDistribution] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
-      const q = query(collection(db, 'Compras'), orderBy('fecha', 'asc'));
+      setLoading(true);
+      
+      const unsubscribe = onSnapshot(collection(db, 'Compras'), async (comprasSnapshot) => {
+        const allOrdersPromises = comprasSnapshot.docs.map(async (compraDoc) => {
+          const compraData = compraDoc.data();
+          const productosSnap = await getDocs(
+            collection(db, `Compras/${compraDoc.id}/Productos`)
+          );
+          const productos = productosSnap.docs.map((productoDoc) => ({
+            id: productoDoc.id,
+            ...productoDoc.data(),
+          }));
+          return {
+            id: compraDoc.id,
+            ...compraData,
+            productos, // Ahora 'productos' contiene los datos de la subcolección
+          };
+        });
 
-      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-        const allPedidos = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const allOrders = await Promise.all(allOrdersPromises);
 
-        // 1. Procesar Ventas Totales por Fecha
-        const salesMap = new Map();
-        allPedidos.forEach(pedido => {
-          if (pedido.fecha) {
-            const date = pedido.fecha.toDate().toISOString().split('T')[0]; // Formato YYYY-MM-DD
-            salesMap.set(date, (salesMap.get(date) || 0) + pedido.total);
+        if (!allOrders || allOrders.length === 0) {
+            setLoading(false);
+            setRevenueByDate(null);
+            setTopProducts(null);
+            setOrderStatusDistribution(null);
+            return;
+        }
+
+        // --- 1. Procesar Ingresos T cotales por Fecha (LineChart) ---
+        const revenueMap = new Map();
+        allOrders.forEach(order => {
+          if (order.fecha) {
+            const date = order.fecha.toDate().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            revenueMap.set(date, (revenueMap.get(date) || 0) + order.total);
           }
         });
 
-        const sortedSales = Array.from(salesMap.entries()).sort((a, b) => new Date(a[0]) - new Date(b[0]));
-        const labelsSales = sortedSales.map(entry => entry[0].substring(5)); // Formato MM-DD
-        const dataSales = sortedSales.map(entry => entry[1]);
+        const sortedRevenue = Array.from(revenueMap.entries()).sort((a, b) => new Date(a[0]) - new Date(b[0]));
+        const last7Revenue = sortedRevenue.slice(-7); // Últimos 7 días de actividad
 
-        if (labelsSales.length > 0) {
-          setSalesByDate({
-            labels: labelsSales.slice(-7), // Últimos 7 días de actividad
-            datasets: [{ data: dataSales.slice(-7) }],
+        if (last7Revenue.length > 0) {
+          setRevenueByDate({
+            labels: last7Revenue.map(entry => entry[0].substring(5)), // Formato MM-DD
+            datasets: [{ data: last7Revenue.map(entry => entry[1]) }],
           });
+        } else {
+          setRevenueByDate(null);
         }
 
-        // 2. Procesar Ingresos Acumulados
-        let accumulated = 0;
-        const cumulativeData = sortedSales.map(entry => {
-          accumulated += entry[1];
-          return accumulated;
-        });
-
-        if (labelsSales.length > 0) {
-          setCumulativeRevenue({
-            labels: labelsSales.slice(-7),
-            datasets: [{ data: cumulativeData.slice(-7) }],
-          });
-        }
-
-        // 3. Procesar Productos más vendidos (usando BarChart para mejor visualización)
+        // --- 2. Procesar Top 5 Productos Más Vendidos (BarChart) ---
         const productsMap = new Map();
-        // Esta parte requiere leer subcolecciones, lo cual es más complejo.
-        // Por simplicidad, asumimos que los productos están en el documento principal.
-        allPedidos.forEach(pedido => {
-            if (pedido.productos && Array.isArray(pedido.productos)) {
-                pedido.productos.forEach(producto => {
-                    productsMap.set(producto.nombre, (productsMap.get(producto.nombre) || 0) + producto.cantidad);
-                });
-            }
+        allOrders.forEach(order => {
+          if (order.productos && Array.isArray(order.productos)) {
+            order.productos.forEach(producto => {
+              productsMap.set(producto.nombre, (productsMap.get(producto.nombre) || 0) + (producto.cantidad || 0));
+            });
+          }
         });
 
         const sortedProducts = Array.from(productsMap.entries()).sort((a, b) => b[1] - a[1]);
         const top5Products = sortedProducts.slice(0, 5);
-        const labelsProducts = top5Products.map(p => p[0].substring(0, 10) + '...'); // Nombres cortos
-        const dataProducts = top5Products.map(p => p[1]);
 
-        if (labelsProducts.length > 0) {
+        if (top5Products.length > 0) {
           setTopProducts({
-            labels: labelsProducts,
-            datasets: [{ data: dataProducts }],
+            labels: top5Products.map(p => p[0].substring(0, 12) + '...'), // Nombres cortos
+            datasets: [{ data: top5Products.map(p => p[1]) }],
           });
+        } else {
+          setTopProducts(null);
+        }
+
+        // --- 3. Procesar Distribución de Pedidos por Estado (PieChart) ---
+        const statusMap = new Map();
+        allOrders.forEach(order => {
+            statusMap.set(order.estado, (statusMap.get(order.estado) || 0) + 1);
+        });
+
+        const statusColors = {
+            'Pedido realizado': '#3498db',
+            'En empaquetado': '#f1c40f',
+            'Entregado': '#2ecc71',
+            'Recibido por Cliente': '#95a5a6',
+        };
+
+        const statusData = Array.from(statusMap.entries()).map(([name, population]) => ({
+            name,
+            population,
+            color: statusColors[name] || '#e74c3c', // Un color por defecto si el estado no está mapeado
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 14,
+        }));
+
+        if (statusData.length > 0) {
+            setOrderStatusDistribution(statusData);
+        } else {
+            setOrderStatusDistribution(null);
         }
 
         setLoading(false);
@@ -109,7 +145,9 @@ export default function Dashboard() {
         setLoading(false);
       });
 
-      return () => unsubscribe();
+      return () => {
+        if (unsubscribe) unsubscribe();
+      };
     }, [])
   );
 
@@ -120,46 +158,50 @@ export default function Dashboard() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.headerTitle}>Dashboard de Ventas</Text>
-
-      {salesByDate ? (
-        <ChartContainer title="Ventas Totales por Fecha (Últimos 7 días)">
+      
+      {revenueByDate ? (
+        <ChartContainer title="Ingresos por Fecha (Últimos 7 días)">
           <LineChart
-            data={salesByDate}
+            data={revenueByDate}
             width={screenWidth - 32}
-            height={220}
+            height={250}
             yAxisLabel="$"
             chartConfig={chartConfig}
             bezier
+            fromZero
           />
         </ChartContainer>
-      ) : <Text style={styles.noDataText}>No hay datos de ventas por fecha.</Text>}
-
-      {cumulativeRevenue ? (
-        <ChartContainer title="Ingresos Acumulados (Últimos 7 días)">
-          <LineChart
-            data={cumulativeRevenue}
-            width={screenWidth - 32}
-            height={220}
-            yAxisLabel="$"
-            chartConfig={chartConfig}
-            bezier
-          />
-        </ChartContainer>
-      ) : <Text style={styles.noDataText}>No hay datos de ingresos acumulados.</Text>}
+      ) : <Text style={styles.noDataText}>No hay datos de ingresos para mostrar.</Text>}
 
       {topProducts ? (
-        <ChartContainer title="Top 5 Productos Más Vendidos">
+        <ChartContainer title="Top 5 Productos Más Vendidos (Unidades)">
           <BarChart
             data={topProducts}
             width={screenWidth - 32}
             height={250}
-            yAxisLabel=""
+            yAxisSuffix=" u."
             chartConfig={chartConfig}
-            verticalLabelRotation={20}
+            verticalLabelRotation={15}
             fromZero
           />
         </ChartContainer>
       ) : <Text style={styles.noDataText}>No hay datos de productos vendidos.</Text>}
+
+      {orderStatusDistribution ? (
+        <ChartContainer title="Distribución de Pedidos por Estado">
+            <PieChart
+                data={orderStatusDistribution}
+                width={screenWidth - 32}
+                height={220}
+                chartConfig={chartConfig}
+                accessor={"population"}
+                backgroundColor={"transparent"}
+                paddingLeft={"15"}
+                absolute
+            />
+        </ChartContainer>
+      ) : <Text style={styles.noDataText}>No hay datos sobre el estado de los pedidos.</Text>}
+
     </ScrollView>
   );
 }

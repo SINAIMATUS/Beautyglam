@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { useFocusEffect } from '@react-navigation/native';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../database/firebaseconfig';
 
 // 1. Definir constantes para los estados de los pedidos
@@ -10,7 +10,8 @@ import { db } from '../database/firebaseconfig';
 const ESTADOS_PEDIDO = {
     REALIZADO: 'Pedido realizado',
     EMPAQUETADO: 'En empaquetado',
-    ENTREGADO: 'Entregado', // Este es el estado para 'Listo para Entrega'
+    ENTREGADO: 'Entregado',
+    CONFIRMADO: 'Recibido por Cliente', // Nuevo estado para cuando el cliente confirma
 };
 
 const PedidosSeccion = ({ titulo, pedidos, onConfirmarEntrega }) => {
@@ -75,7 +76,10 @@ export default function Perfil() {
                         try {
                             // 2. Actualización optimista: removemos el pedido del estado local primero.
                             setPedidos(prevPedidos => prevPedidos.filter(p => p.id !== pedidoId));
-                            await deleteDoc(doc(db, 'Compras', pedidoId));
+                            // Ahora, en lugar de borrar, actualizamos el estado del pedido.
+                            // El administrador verá este nuevo estado, pero el cliente ya no lo verá.
+                            const pedidoRef = doc(db, 'Compras', pedidoId);
+                            await updateDoc(pedidoRef, { estado: ESTADOS_PEDIDO.CONFIRMADO });
                         } catch (error) {
                             Alert.alert("Error", "No se pudo confirmar la entrega.");
                             // Si falla, volvemos a cargar los pedidos para restaurar el estado.

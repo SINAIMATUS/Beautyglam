@@ -6,9 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Categorias from '../Views/Categorias';
 import CerrarSesion from '../Views/CerrarSesion';
 import Marcas from '../Views/Marcas';
-import ProductStack from './ProductStack'; // Importamos el Stack de Productos
-import PedidosAdmin from '../Admin/PedidosAdmin'; // Corregimos la importación al componente correcto
-import Dashboard from '../Admin/Dashboard'; // 1. Importamos el nuevo Dashboard
+import ProductStack from './ProductStack';
+import Dashboard from '../Admin/Dashboard';
+import PedidosStack from './PedidosStack'; // 1. Importamos el nuevo Stack de Pedidos
 
 const Tab = createBottomTabNavigator();
 
@@ -36,6 +36,7 @@ export default function AdminTabs() {
             if (route.name === 'Productos') iconName = 'shirt-outline';
             else if (route.name === 'Dashboard') iconName = 'stats-chart-outline'; // Icono para el Dashboard
             else if (route.name === 'Categorías') iconName = 'pricetags-outline';
+            else if (route.name === 'Ventas') iconName = 'archive-outline';
             else if (route.name === 'Pedidos') iconName = 'receipt-outline';
             else if (route.name === 'Marcas') iconName = 'pricetags-outline';
             else if (route.name === 'Cerrar Sesión') iconName = 'log-out-outline';
@@ -44,10 +45,9 @@ export default function AdminTabs() {
           },
         })}
       >
-        {/* 2. Añadimos la nueva pestaña */}
         <Tab.Screen name="Dashboard" component={Dashboard} />
         <Tab.Screen name="Productos" component={ProductStack} />
-        <Tab.Screen name="Pedidos" component={PedidosAdmin} />
+        <Tab.Screen name="Pedidos" component={PedidosStack} />
         <Tab.Screen name="Categorías" component={Categorias} />
         <Tab.Screen name="Marcas" component={Marcas} />
         <Tab.Screen name="Cerrar Sesión" component={CerrarSesion} />

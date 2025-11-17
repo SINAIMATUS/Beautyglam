@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 import BotonEliminarProducto from "./BotonEliminarProducto";
 
+
 const TablaProductos = ({ Productos, editarProducto, eliminarProducto }) => {
   const renderItem = ({ item }) => (
     <View style={styles.card}>

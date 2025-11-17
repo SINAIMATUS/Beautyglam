@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet, } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../database/firebaseconfig";
 
@@ -10,21 +11,22 @@ export default function SelectorMarcaModal({
   const [marcas, setMarcas] = useState([]);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    const cargarMarcas = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "Marcas"));
-        const lista = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return data.Marca; // Usar el campo 'Marca'
-        });
-        setMarcas(lista);
-      } catch (error) {
-        console.error("Error al cargar las Marcas:", error);
-      }
-    };
-    cargarMarcas();
-  }, []);
+  // Usamos useFocusEffect para que las marcas se recarguen cada vez que la pantalla obtiene el foco.
+  useFocusEffect(
+    useCallback(() => {
+      const cargarMarcas = async () => {
+        try {
+          const snapshot = await getDocs(collection(db, "Marcas"));
+          const lista = snapshot.docs.map((doc) => doc.data().Marca);
+          setMarcas(lista);
+        } catch (error) {
+          console.error("Error al cargar las Marcas:", error);
+        }
+      };
+
+      cargarMarcas();
+    }, [])
+  );
 
   const seleccionar = (marca) => {
     onSeleccionar(marca);

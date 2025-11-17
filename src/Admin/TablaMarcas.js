@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import BotonEliminarMarca from "./BotonEliminarMarca";
 
+
 const TablaMarcas = ({ Marcas, editarMarca, eliminarMarca, ListHeaderComponent }) => {
   const renderItem = ({ item }) => (
     <View style={styles.fila}>

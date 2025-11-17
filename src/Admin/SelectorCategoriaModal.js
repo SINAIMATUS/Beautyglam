@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet, } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../database/firebaseconfig";
 
@@ -10,21 +11,22 @@ export default function SelectorCategoriaModal({
   const [categorias, setCategorias] = useState([]);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    const cargarCategorias = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "Categorias"));
-        const lista = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return data.Categoria; // Usar el campo 'Categoria'
-        });
-        setCategorias(lista);
-      } catch (error) {
-        console.error("Error al cargar categorías:", error);
-      }
-    };
-    cargarCategorias();
-  }, []);
+  // Usamos useFocusEffect para que las categorías se recarguen cada vez que la pantalla obtiene el foco.
+  useFocusEffect(
+    useCallback(() => {
+      const cargarCategorias = async () => {
+        try {
+          const snapshot = await getDocs(collection(db, "Categorias"));
+          const lista = snapshot.docs.map((doc) => doc.data().Categoria);
+          setCategorias(lista);
+        } catch (error) {
+          console.error("Error al cargar categorías:", error);
+        }
+      };
+
+      cargarCategorias();
+    }, [])
+  );
 
   const seleccionar = (categoria) => {
     onSeleccionar(categoria);
