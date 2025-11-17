@@ -64,7 +64,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const realizarCompra = async () => {
+  const realizarCompra = async (datosAdicionales) => {
     if (!usuarioAutenticado) {
       throw new Error("Usuario no autenticado.");
     }
@@ -108,6 +108,8 @@ export const AppProvider = ({ children }) => {
           clienteEmail: usuarioAutenticado.email,
           fecha: serverTimestamp(),
           total: totalCarrito,
+          ...datosAdicionales, // Nombre, telefono, direccion, cedula, metodoPago
+          estado: 'Pedido realizado', // Nuevo estado del pedido
         });
 
         // Ahora ejecutamos las actualizaciones de stock usando los datos que ya leímos

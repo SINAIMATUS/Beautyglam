@@ -8,8 +8,7 @@ import AdminTabs from '../Screens/AdminTabs';
 import ClienteTabs from '../Screens/ClienteTabs';
 import ProductStack from './ProductStack';
 import Marcas from '../Views/Marcas';
-
-
+import Checkout from '../Client/Checkout'; // 1. Importamos la nueva pantalla
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +21,11 @@ export default function Navegacion() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="AdminTabs" component={AdminTabs} />
         <Stack.Screen name="ClienteTabs" component={ClienteTabs} />
+        {/* 2. Añadimos la pantalla al navegador */}
+        <Stack.Screen 
+          name="Checkout" 
+          component={Checkout} 
+          options={{ headerShown: true, title: 'Finalizar Compra', headerStyle: { backgroundColor: '#78032aff' }, headerTintColor: '#fff' }} />
         <Stack.Screen name="ProductStack" component={ProductStack} />
       </Stack.Navigator>
     </NavigationContainer>
