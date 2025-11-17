@@ -100,7 +100,7 @@ export default function Perfil() {
                 <Text style={styles.headerEmail}>{usuarioAutenticado?.email}</Text>
             </View>
 
-            <Text style={styles.titulo}>Mis Pedidos</Text>
+            <Text style={styles.titulo}>Pedidos</Text>
 
             {loading ? (
                 <ActivityIndicator size="large" color="#78032aff" style={{ marginTop: 50 }} />
@@ -119,17 +119,17 @@ export default function Perfil() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
+    container: { flex: 1, backgroundColor: '#633f53ff' },
     header: { backgroundColor: '#78032aff', padding: 20, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 },
     headerTitulo: { fontSize: 24, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
     headerEmail: { fontSize: 16, color: '#eee', textAlign: 'center', marginTop: 4 },
-    titulo: { fontSize: 22, fontWeight: 'bold', color: '#333', textAlign: 'center', marginVertical: 20 },
+    titulo: { fontSize: 22, fontWeight: 'bold', color: '#ffffffff', textAlign: 'center', marginVertical: 20 },
     seccionContainer: { marginBottom: 20, paddingHorizontal: 15 },
-    seccionTitulo: { fontSize: 18, fontWeight: '600', color: '#444', marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#eee', paddingBottom: 5 },
+    seccionTitulo: { fontSize: 18, fontWeight: '600', color: '#ffffffff', marginBottom: 10, fontWeight: 'bold', borderBottomWidth: 1, borderBottomColor: '#eee', paddingBottom: 5 },
     pedidoCard: { backgroundColor: '#f9f9f9', borderRadius: 10, padding: 15, marginVertical: 8, borderWidth: 1, borderColor: '#eee' },
     pedidoFecha: { fontSize: 14, color: '#666' },
     pedidoTotal: { fontSize: 16, fontWeight: 'bold', color: '#333', marginTop: 5 },
     noPedidos: { textAlign: 'center', color: '#999', fontSize: 16, marginTop: 40 },
-    botonConfirmar: { backgroundColor: '#2ecc71', padding: 10, borderRadius: 8, marginTop: 12, alignItems: 'center' },
+    botonConfirmar: { backgroundColor: '#0d247eff', padding: 10, borderRadius: 8, marginTop: 12, alignItems: 'center' },
     textoBotonConfirmar: { color: '#fff', fontWeight: 'bold' },
 });

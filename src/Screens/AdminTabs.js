@@ -8,6 +8,7 @@ import CerrarSesion from '../Views/CerrarSesion';
 import Marcas from '../Views/Marcas';
 import ProductStack from './ProductStack'; // Importamos el Stack de Productos
 import PedidosAdmin from '../Admin/PedidosAdmin'; // Corregimos la importación al componente correcto
+import Dashboard from '../Admin/Dashboard'; // 1. Importamos el nuevo Dashboard
 
 const Tab = createBottomTabNavigator();
 
@@ -33,6 +34,7 @@ export default function AdminTabs() {
           tabBarIcon: ({ color, size }) => {
             let iconName;
             if (route.name === 'Productos') iconName = 'shirt-outline';
+            else if (route.name === 'Dashboard') iconName = 'stats-chart-outline'; // Icono para el Dashboard
             else if (route.name === 'Categorías') iconName = 'pricetags-outline';
             else if (route.name === 'Pedidos') iconName = 'receipt-outline';
             else if (route.name === 'Marcas') iconName = 'pricetags-outline';
@@ -42,6 +44,8 @@ export default function AdminTabs() {
           },
         })}
       >
+        {/* 2. Añadimos la nueva pestaña */}
+        <Tab.Screen name="Dashboard" component={Dashboard} />
         <Tab.Screen name="Productos" component={ProductStack} />
         <Tab.Screen name="Pedidos" component={PedidosAdmin} />
         <Tab.Screen name="Categorías" component={Categorias} />
